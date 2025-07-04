@@ -1,0 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Space+Grotesk:wght@300..700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-light-primary: #f8f8f6;
+  --color-secondary: #00b893;
+  --color-dark-primary: #333333;
+}
+
+@layer {
+  html {
+    font-family: "Outfit", "sans-serif";
+  }
+  body {
+    background: var(--color-light-primary);
+  }
+}
