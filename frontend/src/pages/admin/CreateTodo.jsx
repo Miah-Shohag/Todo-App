@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { TaskContext } from "../../hooks/TaskContext";
 
 const CreateTodo = () => {
+  const [loading, setLoading] = useState(false);
   const { addPost } = useContext(TaskContext);
   const navigate = useNavigate();
 
@@ -36,7 +37,7 @@ const CreateTodo = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     const result = await addPost(formData);
 
     if (result.success) {
@@ -47,8 +48,10 @@ const CreateTodo = () => {
         category: "",
         status: "draft",
       });
+      setLoading(false);
       navigate("/dashboard/manage-tasks");
     } else {
+      setLoading(false);
       toast.error(result.message || "Failed to add post");
     }
   };
@@ -166,7 +169,10 @@ const CreateTodo = () => {
         </div>
 
         <div className="pt-4">
-          <GlobalButton type="submit" title="Create Task" />
+          <GlobalButton
+            type="submit"
+            title={loading ? "Creating..." : "Create Task"}
+          />
         </div>
       </form>
     </div>

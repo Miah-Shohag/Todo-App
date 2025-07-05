@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import TaskCard from "./TaskCard";
 import { Link } from "react-router-dom";
 import GlobalButton from "../../components/GlobalButton";
-import { AiFillEdit, AiOutlineEdit } from "react-icons/ai";
+import { AiOutlineEdit } from "react-icons/ai";
 import { ImCancelCircle } from "react-icons/im";
 import { LuTrash } from "react-icons/lu";
 
@@ -163,8 +163,9 @@ const ManageTasks = () => {
         </h2>
       ) : (
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {tasks.map((task) => (
+          {tasks.map((task, index) => (
             <div
+              key={index}
               className={`relative bg-white bg-opacity-90 backdrop-blur-lg p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-200 ${
                 getBorderColor[task.status]
               } hover:scale-[1.02]`}
@@ -378,14 +379,14 @@ const ManageTasks = () => {
             <div className="text-right flex gap-5 justify-center items-center mt-5">
               <button
                 onClick={() => setDeleteToTask(null)}
-                className="px-3 py-1 text-sm font-medium capitalize bg-gray-200 text-black rounded-lg"
+                className="px-3 py-1 text-sm cursor-pointer font-medium capitalize bg-gray-200 text-black rounded-lg"
               >
                 Cancel
               </button>
               <button
                 disabled={loading}
                 onClick={() => handleDelete(deleteToTask._id)}
-                className={`px-3 py-1 text-sm font-medium capitalize bg-red-600 text-white rounded-lg ${
+                className={`px-3 py-1 text-sm cursor-pointer font-medium capitalize bg-red-600 text-white rounded-lg ${
                   loading ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >

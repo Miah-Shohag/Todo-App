@@ -3,6 +3,7 @@ import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import { Toaster, toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import Card from "../../components/admin/Card";
+import { ImCancelCircle } from "react-icons/im";
 
 // Styles
 const getStatusStyle = {
@@ -21,6 +22,7 @@ const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editTask, setEditTask] = useState(null);
+  const [deleteToTask, setDeleteToTask] = useState(null);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -45,6 +47,7 @@ const Dashboard = () => {
   }, []);
 
   const handleDelete = async (id) => {
+    setLoading(true);
     try {
       const res = await fetch(`http://localhost:5000/api/tasks/${id}`, {
         method: "DELETE",
@@ -54,7 +57,10 @@ const Dashboard = () => {
       if (res.ok) {
         toast.success(data.message);
         setTasks((prev) => prev.filter((task) => task._id !== id));
+        setLoading(false);
+        setDeleteToTask(null);
       } else {
+        setLoading(false);
         toast.error(data.message || "Failed to delete task.");
       }
     } catch {
@@ -65,6 +71,7 @@ const Dashboard = () => {
   const onToggleStatus = async (id) => {
     const task = tasks.find((t) => t._id === id);
     if (!task) return;
+
     const newStatus = task.status === "completed" ? "pending" : "completed";
 
     try {
@@ -83,14 +90,8 @@ const Dashboard = () => {
       } else {
         toast.error(data.message);
       }
-    } catch {
+    } catch (err) {
       toast.error("Failed to update status.");
-    }
-  };
-
-  const onDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this task?")) {
-      handleDelete(id);
     }
   };
 
@@ -212,7 +213,11 @@ const Dashboard = () => {
                   </td>
                   <td className="px-2 sm:px-4 py-3 text-gray-500">
                     {task.dueDate
-                      ? new Date(task.dueDate).toLocaleDateString()
+                      ? new Date(task.dueDate).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })
                       : "N/A"}
                   </td>
                   <td className="px-2 sm:px-4 py-3 text-center">
@@ -230,7 +235,7 @@ const Dashboard = () => {
                         size={18}
                       />
                       <AiFillDelete
-                        onClick={() => onDelete(task._id)}
+                        onClick={() => setDeleteToTask(task)}
                         className="text-red-600 hover:text-red-800 cursor-pointer"
                         size={18}
                       />
@@ -302,6 +307,40 @@ const Dashboard = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {deleteToTask && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md relative">
+            <span className="flex justify-center items-center mb-2">
+              <ImCancelCircle size={28} className="text-red-600" />
+            </span>
+            <span className="text-center text-xl block font-bold">
+              Are you sure?
+            </span>
+            <span className="text-xs block text-center my-3">
+              Are you sure you want to delete the task from the record? This
+              process cannot be undone.
+            </span>
+            <div className="text-right flex gap-5 justify-center items-center mt-5">
+              <button
+                onClick={() => setDeleteToTask(null)}
+                className="px-3 py-1 text-sm font-medium cursor-pointer capitalize bg-gray-200 text-black rounded-lg"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={loading}
+                onClick={() => handleDelete(deleteToTask._id)}
+                className={`px-3 py-1 text-sm font-medium cursor-pointer capitalize bg-red-600 text-white rounded-lg ${
+                  loading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                {loading ? "Deleting..." : "Delete"}
+              </button>
+            </div>
           </div>
         </div>
       )}

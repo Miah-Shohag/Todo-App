@@ -221,9 +221,8 @@ const isCompletedTask = async (req, res, next) => {
       });
     }
 
-    task.status = "completed";
     task.isCompleted = !task.isCompleted;
-
+    task.status = "completed";
     await task.save();
 
     return res.status(200).json({
@@ -241,7 +240,10 @@ const showCompletedTask = async (req, res, next) => {
     const userId = req.user.id;
 
     // Fetch completed tasks created by the logged-in user
-    const tasks = await Task.find({ isCompleted: true, createdBy: userId });
+    const tasks = await Task.find({
+      status: "completed",
+      createdBy: userId,
+    });
 
     if (tasks.length === 0) {
       return res.status(404).json({
