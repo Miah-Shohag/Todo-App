@@ -20,41 +20,48 @@ const getPriorityStyle = {
   low: "bg-blue-100 text-blue-600",
 };
 
-const TaskCard = ({ task, onEdit, onDelete, onToggleStatus }) => {
+const TaskCard = ({ tasks, onEdit, onDelete, onToggleStatus }) => {
   onToggleStatus = async (id) => {
+    const task = tasks.find((t) => t._id === id);
+    if (!task) return;
+
+    const newStatus = task.status === "completed" ? "pending" : "completed";
+
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/tasks/isCompleted/${id}`,
-        {
-          method: "PUT",
-          credentials: "include",
-        }
-      );
-      const result = await res.json();
+      const res = await fetch(`http://localhost:5000/api/tasks/${id}`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...task, status: newStatus }),
+      });
+      const data = await res.json();
       if (res.ok) {
-        toast.success(result.message || "Task status updated");
-        onStatusToggle?.(id); // Notify parent to update status locally
+        toast.success("Status updated");
+        setTasks((prev) =>
+          prev.map((t) => (t._id === id ? { ...t, status: newStatus } : t))
+        );
       } else {
-        toast.error(result.message || "Failed to update task");
+        toast.error(data.message);
       }
-    } catch (error) {
-      toast.error("Something went wrong while toggling status");
-      console.error(error);
+    } catch (err) {
+      toast.error("Failed to update status.");
     }
   };
+
   return (
     <div
       className={`relative bg-white bg-opacity-90 backdrop-blur-lg p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-200 ${
-        getBorderColor[task.status]
+        getBorderColor[tasks.status]
       } hover:scale-[1.02]`}
     >
       {/* Edit/Delete/Complete */}
       <div className="absolute top-4 right-4 flex gap-2 text-gray-400">
         <input
           type="checkbox"
-          checked={task.status === "completed" ? "checked" : ""}
+          checked={tasks.status === "completed"}
           onChange={() => onToggleStatus(task._id)}
-          className="cursor-pointer accent-green-500"
+          className="accent-green-600 cursor-pointer"
+          title="Mark as completed"
         />
         <AiFillEdit
           onClick={() => onEdit(task._id)}

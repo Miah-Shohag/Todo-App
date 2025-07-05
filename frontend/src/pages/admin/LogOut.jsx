@@ -20,7 +20,7 @@ const LogOut = () => {
         if (res.ok) {
           setUser(null); // Clear user from context
           toast.success(data.message || "Logged out");
-          navigate("/signin");
+          navigate("");
         } else {
           toast.error(data.message || "Logout failed");
         }

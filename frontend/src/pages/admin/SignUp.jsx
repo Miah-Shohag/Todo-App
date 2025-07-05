@@ -133,7 +133,7 @@ const SignUp = () => {
           </form>
           <div className="flex items-center justify-center">
             Do you have already an account?
-            <Link className="ml-2 font-medium text-blue-600" to="/signin">
+            <Link className="ml-2 font-medium text-blue-600" to="/">
               Sign in
             </Link>
           </div>

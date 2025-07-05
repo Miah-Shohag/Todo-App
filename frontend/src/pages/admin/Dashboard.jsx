@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import { Toaster, toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
+import Card from "../../components/admin/Card";
 
-// Helper styles
+// Styles
 const getStatusStyle = {
   pending: "bg-purple-100 text-purple-600",
   "in progress": "bg-cyan-100 text-cyan-600",
@@ -21,7 +22,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [editTask, setEditTask] = useState(null);
 
-  // Fetch tasks
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -44,7 +44,6 @@ const Dashboard = () => {
     fetchTasks();
   }, []);
 
-  // Delete task
   const handleDelete = async (id) => {
     try {
       const res = await fetch(`http://localhost:5000/api/tasks/${id}`, {
@@ -58,16 +57,14 @@ const Dashboard = () => {
       } else {
         toast.error(data.message || "Failed to delete task.");
       }
-    } catch (err) {
+    } catch {
       toast.error("Error deleting task.");
     }
   };
 
-  // Handle status toggle
   const onToggleStatus = async (id) => {
     const task = tasks.find((t) => t._id === id);
     if (!task) return;
-
     const newStatus = task.status === "completed" ? "pending" : "completed";
 
     try {
@@ -86,7 +83,7 @@ const Dashboard = () => {
       } else {
         toast.error(data.message);
       }
-    } catch (err) {
+    } catch {
       toast.error("Failed to update status.");
     }
   };
@@ -102,7 +99,6 @@ const Dashboard = () => {
     setEditTask(taskToEdit);
   };
 
-  // Save edited task
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -125,7 +121,7 @@ const Dashboard = () => {
       } else {
         toast.error(data.message || "Update failed");
       }
-    } catch (err) {
+    } catch {
       toast.error("Failed to update task.");
     }
   };
@@ -140,63 +136,63 @@ const Dashboard = () => {
   const summary = getSummary();
 
   return (
-    <div className="p-5">
+    <div className="p-4 sm:p-5">
       <Toaster />
-      <h1 className="text-2xl font-bold mb-4">Dashboard Summary</h1>
+      <div className="flex flex-col gap-2 mb-10 text-center">
+        <h1 className="text-lg sm:text-xl lg:text-2xl font-bold leading-tight">
+          Welcome to Todo Dashboard Management.
+        </h1>
+        <p className="text-sm sm:text-base text-gray-600 font-medium">
+          Make your day more productive and enjoyable.
+        </p>
+      </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white p-4 rounded shadow text-center">
-          <h2 className="text-lg font-semibold">Total Tasks</h2>
-          <p className="text-2xl font-bold text-blue-600">{summary.total}</p>
-        </div>
-        <div className="bg-white p-4 rounded shadow text-center">
-          <h2 className="text-lg font-semibold">Completed</h2>
-          <p className="text-2xl font-bold text-green-600">
-            {summary.completed}
-          </p>
-        </div>
-        <div className="bg-white p-4 rounded shadow text-center">
-          <h2 className="text-lg font-semibold">Pending</h2>
-          <p className="text-2xl font-bold text-purple-600">
-            {summary.pending}
-          </p>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <Card label="Total tasks" summary={summary.total} />
+        <Card label="Completed" summary={summary.completed} />
+        <Card label="Pending" summary={summary.pending} />
+        <Card label="Pending" summary={summary.pending} />
       </div>
 
       {/* Task Table */}
       {loading ? (
-        <p>Loading tasks...</p>
+        <p className="text-center">Loading tasks...</p>
       ) : tasks.length === 0 ? (
-        <h2 className="mx-auto font-medium text-md">
-          You haven't created any tasks yet. To create a task{" "}
-          <Link className="text-secondary" to="/dashboard/create-todo">
+        <h2 className="text-center font-medium text-md">
+          You haven't created any tasks yet.{" "}
+          <Link
+            className="text-secondary underline"
+            to="/dashboard/create-todo"
+          >
             Create a new todo
           </Link>
         </h2>
       ) : (
         <div className="overflow-x-auto w-full bg-white rounded-xl shadow-md">
-          <table className="min-w-full divide-y divide-gray-200 text-sm">
-            <thead className="bg-secondary text-left text-white uppercase tracking-wider">
+          <table className="min-w-full divide-y divide-gray-200 text-sm sm:text-base">
+            <thead className="bg-secondary text-white uppercase tracking-wider">
               <tr>
-                <th className="px-4 py-3">Title</th>
-                <th className="px-4 py-3">Description</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Priority</th>
-                <th className="px-4 py-3">Due Date</th>
-                <th className="px-4 py-3 text-center">Actions</th>
+                <th className="px-2 py-2 sm:px-4 sm:py-3">Title</th>
+                <th className="px-2 py-2 sm:px-4 sm:py-3">Description</th>
+                <th className="px-2 py-2 sm:px-4 sm:py-3">Status</th>
+                <th className="px-2 py-2 sm:px-4 sm:py-3">Priority</th>
+                <th className="px-2 py-2 sm:px-4 sm:py-3">Due Date</th>
+                <th className="px-2 py-2 sm:px-4 sm:py-3 text-center">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {tasks.map((task) => (
                 <tr key={task._id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-800">
-                    {task.title}
+                  <td className="px-2 sm:px-4 py-3 font-medium text-gray-800">
+                    {task.title.slice(0, 10)}...
                   </td>
-                  <td className="px-4 py-3 text-gray-600 line-clamp-2 max-w-xs">
-                    {task.description}
+                  <td className="px-2 sm:px-4 py-3 text-gray-600 line-clamp-2 max-w-xs">
+                    {task.description.slice(0, 20)}...
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-2 sm:px-4 py-3">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${
                         getStatusStyle[task.status]
@@ -205,7 +201,7 @@ const Dashboard = () => {
                       {task.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-2 sm:px-4 py-3">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${
                         getPriorityStyle[task.priority]
@@ -214,13 +210,13 @@ const Dashboard = () => {
                       {task.priority}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-500">
+                  <td className="px-2 sm:px-4 py-3 text-gray-500">
                     {task.dueDate
                       ? new Date(task.dueDate).toLocaleDateString()
                       : "N/A"}
                   </td>
-                  <td className="px-4 py-3 text-center">
-                    <div className="flex justify-center items-center gap-4">
+                  <td className="px-2 sm:px-4 py-3 text-center">
+                    <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4">
                       <input
                         type="checkbox"
                         checked={task.status === "completed"}
@@ -250,26 +246,26 @@ const Dashboard = () => {
       {/* Edit Modal */}
       {editTask && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow w-full max-w-md">
+          <div className="bg-white p-6 rounded shadow w-full max-w-md mx-2 sm:mx-0">
             <h2 className="text-lg font-bold mb-4">Edit Task</h2>
             <form onSubmit={handleEditSubmit} className="space-y-3">
               <input
                 type="text"
-                className="w-full p-2 border rounded"
+                className="w-full p-2 sm:p-3 text-sm sm:text-base border rounded"
                 value={editTask.title}
                 onChange={(e) =>
                   setEditTask({ ...editTask, title: e.target.value })
                 }
               />
               <textarea
-                className="w-full p-2 border rounded"
+                className="w-full p-2 sm:p-3 text-sm sm:text-base border rounded"
                 value={editTask.description}
                 onChange={(e) =>
                   setEditTask({ ...editTask, description: e.target.value })
                 }
               />
               <select
-                className="w-full p-2 border rounded"
+                className="w-full p-2 sm:p-3 text-sm sm:text-base border rounded"
                 value={editTask.status}
                 onChange={(e) =>
                   setEditTask({ ...editTask, status: e.target.value })
@@ -280,7 +276,7 @@ const Dashboard = () => {
                 <option value="completed">Completed</option>
               </select>
               <select
-                className="w-full p-2 border rounded"
+                className="w-full p-2 sm:p-3 text-sm sm:text-base border rounded"
                 value={editTask.priority}
                 onChange={(e) =>
                   setEditTask({ ...editTask, priority: e.target.value })

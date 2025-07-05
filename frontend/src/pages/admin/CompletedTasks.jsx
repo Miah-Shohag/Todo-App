@@ -19,7 +19,10 @@ const CompletedTasks = () => {
       const data = await res.json();
 
       if (res.ok) {
-        setCompletedTasks(data.tasks);
+        const completed = data.tasks.filter(
+          (task) => task.status === "completed"
+        );
+        setCompletedTasks(completed);
       } else {
       }
     } catch (error) {
@@ -33,6 +36,43 @@ const CompletedTasks = () => {
   useEffect(() => {
     showCompletedTasks();
   }, []);
+
+  const handleToggleStatus = async (id) => {
+    const task = completedTasks.find((t) => t._id === id);
+    if (!task) return;
+
+    const newStatus = task.status === "completed" ? "pending" : "completed";
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/tasks/${id}`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...task, status: newStatus }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success("Status updated");
+
+        if (newStatus === "completed") {
+          // Just update the task in place
+          setCompletedTasks((prev) =>
+            prev.map((t) => (t._id === id ? { ...t, status: newStatus } : t))
+          );
+        } else {
+          // If task is now pending, remove it from the completed list
+          setCompletedTasks((prev) => prev.filter((t) => t._id !== id));
+        }
+      } else {
+        toast.error(data.message || "Failed to update status.");
+      }
+    } catch (err) {
+      toast.error("Failed to update status.");
+      console.error(err);
+    }
+  };
 
   return (
     <div className="p-4">

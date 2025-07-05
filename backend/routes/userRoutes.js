@@ -9,7 +9,6 @@ import {
   userUpdate,
   logOut,
   updatePassword,
-  resetPassword,
   sendOTP,
 } from "../controllers/userControllers.js";
 import { adminOnly, verifyToken } from "../middlewares/verifyToken.js";

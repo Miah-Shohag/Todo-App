@@ -28,8 +28,9 @@ const App = () => {
       <Router>
         <Routes>
           {/* Public Routes */}
+
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/signin" element={<SignIn />} />
+          <Route path="" element={<SignIn />} />
 
           {/* Protected routes for any logged-in user */}
           <Route element={<ProtectedRoute allowedRoles={["user", "admin"]} />}>

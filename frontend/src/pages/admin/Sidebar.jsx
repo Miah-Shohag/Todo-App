@@ -1,11 +1,20 @@
 import React, { useContext, useState } from "react";
 import { NavLink } from "react-router-dom";
 import Avatar from "../../assets/avatar.jpg";
-import { MdDashboard, MdSettings, MdAccountCircle } from "react-icons/md";
-import { AiOutlineLogout } from "react-icons/ai";
-import { BiTask } from "react-icons/bi";
-import { VscNewFile } from "react-icons/vsc";
+
 import { ThemeContext } from "../../hooks/ThemeContext";
+
+import {
+  Home,
+  ListChecks,
+  ListTodo,
+  Users,
+  PlusCircle,
+  CheckCircle2,
+  UserCircle,
+  Settings,
+  LogOut,
+} from "lucide-react";
 
 const Sidebar = () => {
   const { user } = useContext(ThemeContext);
@@ -15,60 +24,64 @@ const Sidebar = () => {
     setOpenSubMenu((prev) => (prev === name ? null : name));
   };
 
-  // Define nav items with roles allowed to see them
   const navItems = [
     {
       name: "Dashboard",
       path: "/dashboard",
-      icon: <MdDashboard />,
+      icon: <Home className="w-4 h-4" />,
       roles: ["user", "admin"],
     },
+    { name: "Tasks Management", roles: ["user", "admin"] },
     {
       name: "Manage Tasks",
       path: "/dashboard/manage-tasks",
-      icon: <BiTask />,
-      roles: ["admin", "user"],
+      icon: <ListChecks className="w-4 h-4" />,
+      roles: ["user", "admin"],
     },
     {
       name: "All Tasks",
       path: "/dashboard/all-tasks",
-      icon: <BiTask />,
-      roles: ["admin"],
-    },
-    {
-      name: "Users",
-      path: "/dashboard/users",
-      icon: <BiTask />,
+      icon: <ListTodo className="w-4 h-4" />,
       roles: ["admin"],
     },
     {
       name: "Create Todo",
       path: "/dashboard/create-todo",
-      icon: <VscNewFile />,
+      icon: <PlusCircle className="w-4 h-4" />,
       roles: ["user", "admin"],
     },
     {
       name: "Completed",
       path: "/dashboard/me/completed-tasks",
-      icon: <VscNewFile />,
+      icon: <CheckCircle2 className="w-4 h-4" />,
       roles: ["user", "admin"],
     },
+
+    { name: "Accounts", roles: ["user", "admin"] },
+    {
+      name: "Users",
+      path: "/dashboard/users",
+      icon: <Users className="w-4 h-4" />,
+      roles: ["admin"],
+    },
+
     {
       name: "Profile",
       path: "/dashboard/profile",
-      icon: <MdAccountCircle />,
+      icon: <UserCircle className="w-4 h-4" />,
       roles: ["user", "admin"],
     },
+    { name: "System", roles: ["user", "admin"] },
     {
       name: "Settings",
       path: "/dashboard/settings",
-      icon: <MdSettings />,
+      icon: <Settings className="w-4 h-4" />,
       roles: ["admin"],
     },
     {
       name: "Logout",
       path: "/dashboard/logout",
-      icon: <AiOutlineLogout />,
+      icon: <LogOut className="w-4 h-4" />,
       roles: ["user", "admin"],
     },
   ];
@@ -94,23 +107,29 @@ const Sidebar = () => {
       </div>
 
       <nav>
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-2 mx-5">
           {filteredNavItems.map((item, index) => (
-            <li key={index} className="relative font-medium text-sm">
-              <NavLink
-                to={item.path}
-                end={item.path === "/dashboard"}
-                className={({ isActive }) =>
-                  `flex items-center gap-2 px-4 py-2 dark:hover:bg-gray-700 ${
-                    isActive
-                      ? "bg-green-100 text-green-600 dark:bg-gray-600 border-r-3 border-green-600"
-                      : "hover:bg-gray-200"
-                  }`
-                }
-              >
-                <span>{item.icon}</span>
-                <span className="hidden lg:block">{item.name}</span>
-              </NavLink>
+            <li key={index} className="relative text-sm">
+              {item.path ? (
+                <NavLink
+                  to={item.path}
+                  end={item.path === "/dashboard"}
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ml-2 ${
+                      isActive
+                        ? "bg-secondary text-white dark:bg-gray-700"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    }`
+                  }
+                >
+                  <span className="">{item.icon}</span>
+                  <span>{item.name}</span>
+                </NavLink>
+              ) : (
+                <div className="mt-4 mb-1 px-4 font-semibold text-[10px] uppercase tracking-widest text-gray-500 dark:text-gray-400">
+                  {item.name}
+                </div>
+              )}
             </li>
           ))}
         </ul>
